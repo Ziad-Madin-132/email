@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تفعيل حسابات Gemgala - جلب أكواد OTP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-card-hover: #26354a;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --font-main: 'Cairo', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .badge-status.online {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-status.static {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .dot-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-indicator.online { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .dot-indicator.static { background: #f59e0b; }
+
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        /* Notice banner */
+        .static-banner {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fde68a;
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .static-banner.show {
+            display: block;
+        }
+
+        .static-banner a {
+            color: #38bdf8;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+
+        /* Main OTP Checker Card */
+        .otp-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 26px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .otp-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        @media (max-width: 860px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            background: #0b1324;
+            border: 1.5px solid var(--border);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-family: var(--font-main);
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1, #1d4ed8);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: #f8fafc;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-watch {
+            background: #14532d;
+            color: #4ade80;
+            border: 1px solid #22c55e;
+        }
+
+        .btn-watch.active {
+            background: #991b1b;
+            color: #fca5a5;
+            border-color: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Result display */
+        .result-panel {
+            margin-top: 22px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #0b1324;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .result-panel.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .otp-display-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(56, 189, 248, 0.08));
+            border: 2px dashed var(--success);
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .otp-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .otp-code {
+            font-family: var(--font-mono);
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #4ade80;
+            margin: 10px 0;
+            cursor: pointer;
+            user-select: all;
+            display: inline-block;
+        }
+
+        .otp-code:hover {
+            color: #86efac;
+            text-decoration: underline;
+        }
+
+        .copy-hint {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .msg-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+            text-align: right;
+            direction: rtl;
+        }
+
+        .msg-body-preview {
+            background: #050b14;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(56, 189, 248, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Accounts Table */
+        .table-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .search-box {
+            max-width: 280px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #0b1324;
+            padding: 12px 14px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .font-mono {
+            font-family: var(--font-mono);
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .btn-xs {
+            padding: 6px 10px;
+            font-size: 0.78rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: #0f172a;
+            color: #cbd5e1;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-xs:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        .btn-xs-primary {
+            background: #0369a1;
+            color: #fff;
+            border-color: #0284c7;
+        }
+
+        .btn-xs-primary:hover {
+            background: #0284c7;
+            color: #fff;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--accent);
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-badges">
+            <span class="badge-tag">Gemgala Manager • 35 Active Inboxes</span>
+            <span class="badge-status" id="backendStatusBadge">
+                <span class="dot-indicator" id="backendDot"></span>
+                <span id="backendStatusText">جاري التحقق من الخادم...</span>
+            </span>
+        </div>
+        <h1>لوحة تفعيل حسابات Gemgala</h1>
+        <p class="subtitle">إدارة الـ 35 حساباً وجلب أكواد التحقق (OTP) بنقرة واحدة</p>
+    </header>
+
+    <div class="static-banner" id="staticBanner">
+        <strong>ملاحظة (وضع GitHub Pages):</strong> أنت تتصفح النسخة الثابتة على الإنترنت. لنسخ البيانات واستعراض الـ 35 إيميل والباسوردات تعمل اللوحة بشكل كامل. لجلب كود الـ OTP تلقائياً، قم بتشغيل <code>server.py</code> أو <code>run_dashboard.bat</code> محلياً على جهازك، أو افتح صندوق البريد مباشرة عبر <a href="https://mail.tm" target="_blank">موقع Mail.tm</a> باستخدام بيانات الحساب.
+    </div>
+
+    <!-- Quick OTP Checker Card -->
+    <div class="otp-box">
+        <div class="form-grid">
+            <div class="input-group">
+                <label for="accountSelect">اختر الحساب المستهدف:</label>
+                <select id="accountSelect">
+                    <option value="" disabled selected>جاري التحميل...</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="btnCheckOtp" onclick="checkSelectedOtp()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                فحص كود التحقق (Get OTP)
+            </button>
+            <button class="btn btn-watch" id="btnWatchOtp" onclick="toggleWatch()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <span id="watchText">مراقبة تلقائية</span>
+            </button>
+            <button class="btn btn-secondary" onclick="openMailTm()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                فتح في Mail.tm
+            </button>
+        </div>
+
+        <!-- Result Box -->
+        <div class="result-panel" id="resultPanel">
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <!-- Table of All 35 Accounts -->
+    <div class="table-section">
+        <div class="table-header">
+            <div class="table-title">قائمة الـ 35 حساباً المسجلة</div>
+            <input type="text" class="search-box" id="searchInput" placeholder="بحث برقم الحساب أو الإيميل..." onkeyup="filterTable()">
+        </div>
+        <div class="table-wrap">
+            <table id="accountsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>البريد الإلكتروني (Email)</th>
+                        <th>المستخدم</th>
+                        <th>كلمة المرور (Password)</th>
+                        <th>إجراءات سريعة</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">تم النسخ بنجاح!</div>
+
+<script>
+const EMBEDDED_ACCOUNTS = [
+  {
+    "no": 1,
+    "email": "gemuser012ade@maxxspace.com",
+    "username": "user01",
+    "password": "GalaPass2026!01"
+  },
+  {
+    "no": 2,
+    "email": "gemuser022ade@maxxspace.com",
+    "username": "user02",
+    "password": "GalaPass2026!02"
+  },
+  {
+    "no": 3,
+    "email": "gemuser032ade@maxxspace.com",
+    "username": "user03",
+    "password": "GalaPass2026!03"
+  },
+  {
+    "no": 4,
+    "email": "gemuser042ade@maxxspace.com",
+    "username": "user04",
+    "password": "GalaPass2026!04"
+  },
+  {
+    "no": 5,
+    "email": "gemuser052ade@maxxspace.com",
+    "username": "user05",
+    "password": "GalaPass2026!05"
+  },
+  {
+    "no": 6,
+    "email": "gemuser062ade@maxxspace.com",
+    "username": "user06",
+    "password": "GalaPass2026!06"
+  },
+  {
+    "no": 7,
+    "email": "gemuser072ade@maxxspace.com",
+    "username": "user07",
+    "password": "GalaPass2026!07"
+  },
+  {
+    "no": 8,
+    "email": "gemuser082ade@maxxspace.com",
+    "username": "user08",
+    "password": "GalaPass2026!08"
+  },
+  {
+    "no": 9,
+    "email": "gemuser092ade@maxxspace.com",
+    "username": "user09",
+    "password": "GalaPass2026!09"
+  },
+  {
+    "no": 10,
+    "email": "gemuser102ade@maxxspace.com",
+    "username": "user10",
+    "password": "GalaPass2026!10"
+  },
+  {
+    "no": 11,
+    "email": "gemuser112ade@maxxspace.com",
+    "username": "user11",
+    "password": "GalaPass2026!11"
+  },
+  {
+    "no": 12,
+    "email": "gemuser122ade@maxxspace.com",
+    "username": "user12",
+    "password": "GalaPass2026!12"
+  },
+  {
+    "no": 13,
+    "email": "gemuser132ade@maxxspace.com",
+    "username": "user13",
+    "password": "GalaPass2026!13"
+  },
+  {
+    "no": 14,
+    "email": "gemuser142ade@maxxspace.com",
+    "username": "user14",
+    "password": "GalaPass2026!14"
+  },
+  {
+    "no": 15,
+    "email": "gemuser152ade@maxxspace.com",
+    "username": "user15",
+    "password": "GalaPass2026!15"
+  },
+  {
+    "no": 16,
+    "email": "gemuser162ade@maxxspace.com",
+    "username": "user16",
+    "password": "GalaPass2026!16"
+  },
+  {
+    "no": 17,
+    "email": "gemuser172ade@maxxspace.com",
+    "username": "user17",
+    "password": "GalaPass2026!17"
+  },
+  {
+    "no": 18,
+    "email": "gemuser182ade@maxxspace.com",
+    "username": "user18",
+    "password": "GalaPass2026!18"
+  },
+  {
+    "no": 19,
+    "email": "gemuser192ade@maxxspace.com",
+    "username": "user19",
+    "password": "GalaPass2026!19"
+  },
+  {
+    "no": 20,
+    "email": "gemuser202ade@maxxspace.com",
+    "username": "user20",
+    "password": "GalaPass2026!20"
+  },
+  {
+    "no": 21,
+    "email": "gemuser212ade@maxxspace.com",
+    "username": "user21",
+    "password": "GalaPass2026!21"
+  },
+  {
+    "no": 22,
+    "email": "gemuser222ade@maxxspace.com",
+    "username": "user22",
+    "password": "GalaPass2026!22"
+  },
+  {
+    "no": 23,
+    "email": "gemuser232ade@maxxspace.com",
+    "username": "user23",
+    "password": "GalaPass2026!23"
+  },
+  {
+    "no": 24,
+    "email": "gemuser242ade@maxxspace.com",
+    "username": "user24",
+    "password": "GalaPass2026!24"
+  },
+  {
+    "no": 25,
+    "email": "gemuser252ade@maxxspace.com",
+    "username": "user25",
+    "password": "GalaPass2026!25"
+  },
+  {
+    "no": 26,
+    "email": "gemuser262ade@maxxspace.com",
+    "username": "user26",
+    "password": "GalaPass2026!26"
+  },
+  {
+    "no": 27,
+    "email": "gemuser272ade@maxxspace.com",
+    "username": "user27",
+    "password": "GalaPass2026!27"
+  },
+  {
+    "no": 28,
+    "email": "gemuser282ade@maxxspace.com",
+    "username": "user28",
+    "password": "GalaPass2026!28"
+  },
+  {
+    "no": 29,
+    "email": "gemuser292ade@maxxspace.com",
+    "username": "user29",
+    "password": "GalaPass2026!29"
+  },
+  {
+    "no": 30,
+    "email": "gemuser302ade@maxxspace.com",
+    "username": "user30",
+    "password": "GalaPass2026!30"
+  },
+  {
+    "no": 31,
+    "email": "gemuser312ade@maxxspace.com",
+    "username": "user31",
+    "password": "GalaPass2026!31"
+  },
+  {
+    "no": 32,
+    "email": "gemuser322ade@maxxspace.com",
+    "username": "user32",
+    "password": "GalaPass2026!32"
+  },
+  {
+    "no": 33,
+    "email": "gemuser332ade@maxxspace.com",
+    "username": "user33",
+    "password": "GalaPass2026!33"
+  },
+  {
+    "no": 34,
+    "email": "gemuser342ade@maxxspace.com",
+    "username": "user34",
+    "password": "GalaPass2026!34"
+  },
+  {
+    "no": 35,
+    "email": "gemuser352ade@maxxspace.com",
+    "username": "user35",
+    "password": "GalaPass2026!35"
+  }
+];
+    let allAccounts = EMBEDDED_ACCOUNTS;
+    let isServerOnline = false;
+    let watchInterval = null;
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function copyText(text, label) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(`تم نسخ ${label}: ${text}`);
+        }).catch(() => {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast(`تم نسخ ${label}: ${text}`);
+        });
+    }
+
+    async function checkServerStatus() {
+        const badge = document.getElementById('backendStatusBadge');
+        const dot = document.getElementById('backendDot');
+        const text = document.getElementById('backendStatusText');
+        const banner = document.getElementById('staticBanner');
+
+        try {
+            const res = await fetch('/api/accounts', { signal: AbortSignal.timeout(2500) });
+            if (res.ok) {
+                const liveAccs = await res.json();
+                if (Array.isArray(liveAccs) && liveAccs.length > 0) {
+                    allAccounts = liveAccs;
+                }
+                isServerOnline = true;
+                badge.className = 'badge-status online';
+                dot.className = 'dot-indicator online';
+                text.innerText = 'السيرفر متصل (جلب فوري)';
+                banner.classList.remove('show');
+                renderSelect();
+                renderTable(allAccounts);
+                return;
+            }
+        } catch (e) {
+            // Static mode (GitHub Pages)
+        }
+
+        isServerOnline = false;
+        badge.className = 'badge-status static';
+        dot.className = 'dot-indicator static';
+        text.innerText = 'وضع العرض الثابت (GitHub Pages)';
+        banner.classList.add('show');
+        renderSelect();
+        renderTable(allAccounts);
+    }
+
+    function renderSelect() {
+        const sel = document.getElementById('accountSelect');
+        sel.innerHTML = '';
+        allAccounts.forEach(acc => {
+            const opt = document.createElement('option');
+            opt.value = acc.no;
+            opt.innerText = `#${acc.no} - ${acc.username} (${acc.email})`;
+            sel.appendChild(opt);
+        });
+    }
+
+    function renderTable(list) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        list.forEach(acc => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight: 700; color: var(--accent);">${acc.no}</td>
+                <td><span class="font-mono">${acc.email}</span></td>
+                <td><span class="font-mono">${acc.username}</span></td>
+                <td><span class="font-mono" style="color: #cbd5e1;">${acc.password}</span></td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-xs btn-xs-primary" onclick="selectAndCheck(${acc.no})">فحص OTP</button>
+                        <button class="btn-xs" onclick="copyText('${acc.email}', 'الإيميل')">نسخ الإيميل</button>
+                        <button class="btn-xs" onclick="copyText('${acc.password}', 'كلمة السر')">نسخ الباسورد</button>
+                        <a class="btn-xs" href="https://mail.tm" target="_blank">Mail.tm ↗</a>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterTable() {
+        const q = document.getElementById('searchInput').value.toLowerCase().trim();
+        const filtered = allAccounts.filter(a => 
+            a.no.toString().includes(q) || 
+            a.email.toLowerCase().includes(q) || 
+            a.username.toLowerCase().includes(q)
+        );
+        renderTable(filtered);
+    }
+
+    function selectAndCheck(no) {
+        document.getElementById('accountSelect').value = no;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        checkSelectedOtp();
+    }
+
+    function openMailTm() {
+        const sel = document.getElementById('accountSelect');
+        const accNo = sel.value;
+        const acc = allAccounts.find(a => a.no == accNo);
+        if (acc) {
+            copyText(acc.email, 'الإيميل');
+        }
+        window.open('https://mail.tm', '_blank');
+    }
+
+    async function checkSelectedOtp(silent = false) {
+        const sel = document.getElementById('accountSelect');
+        const accNo = sel.value;
+        if (!accNo) return;
+
+        const acc = allAccounts.find(a => a.no == accNo);
+        const panel = document.getElementById('resultPanel');
+        const content = document.getElementById('resultContent');
+        panel.classList.add('show');
+
+        if (!silent) {
+            content.innerHTML = `
+                <div class="empty-state">
+                    <div class="spinner"></div>
+                    <div>جاري فحص صندوق الوارد للحساب #${accNo} (${acc.email})...</div>
+                </div>
+            `;
+        }
+
+        if (!isServerOnline) {
+            content.innerHTML = `
+                <div style="padding: 16px; border: 1px dashed var(--warning); border-radius: 12px; background: rgba(245, 158, 11, 0.05);">
+                    <h3 style="color: #fbbf24; margin-bottom: 8px; font-size: 1.1rem;">أنت تعمل في وضع GitHub Pages الثابت</h3>
+                    <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 12px; line-height: 1.6;">
+                        متصفح الويب يحظر جلب الرسائل مباشرة بسبب قيود CORS من خوادم البريد. لجلب كود الـ OTP تلقائياً:
+                    </p>
+                    <ul style="margin-right: 20px; font-size: 0.88rem; color: #94a3b8; line-height: 1.8; margin-bottom: 14px;">
+                        <li><strong>الخيار 1 (الآلي):</strong> شغّل السيرفر المحلي عبر تشغيل <code>run_dashboard.bat</code> أو <code>python server.py</code>.</li>
+                        <li><strong>الخيار 2 (المباشر من الويب):</strong> سجل الدخول إلى <a href="https://mail.tm" target="_blank" style="color: #38bdf8;">موقع Mail.tm</a> بالإيميل وكلمة السر أدناه.</li>
+                    </ul>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="copyText('${acc.email}', 'الإيميل')">نسخ الإيميل: ${acc.email}</button>
+                        <button class="btn btn-secondary" onclick="copyText('${acc.password}', 'كلمة السر')">نسخ الباسورد: ${acc.password}</button>
+                        <a class="btn btn-watch" href="https://mail.tm" target="_blank">الانتقال إلى Mail.tm ↗</a>
+                    </div>
+                </div>
+            `;
+            if (watchInterval) toggleWatch();
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/otp?target=${accNo}`);
+            const data = await res.json();
+
+            if (!data.success) {
+                content.innerHTML = `<div style="color: var(--danger); text-align: center; padding: 15px;">خطأ: ${data.error || 'فشل الفحص'}</div>`;
+                return;
+            }
+
+            if (data.latest_otp) {
+                content.innerHTML = `
+                    <div class="otp-display-card">
+                        <div class="otp-label">كود تفعيل Gemgala الذي وصل الآن:</div>
+                        <div class="otp-code" onclick="copyText('${data.latest_otp}', 'كود التفعيل')">${data.latest_otp}</div>
+                        <div class="copy-hint">(اضغط على الكود بالماوس لنسخه فوراً)</div>
+                        <button class="btn btn-primary" style="margin-top: 12px; padding: 8px 18px;" onclick="copyText('${data.latest_otp}', 'كود التفعيل')">نسخ الكود بنقرة واحدة</button>
+                    </div>
+                    <div class="msg-meta">
+                        <div><strong>من:</strong> ${data.from || 'غير محدد'}</div>
+                        <div><strong>الموضوع:</strong> ${data.subject || 'بدون عنوان'}</div>
+                        <div><strong>تاريخ الاستلام:</strong> ${new Date(data.date).toLocaleTimeString('ar-EG')}</div>
+                    </div>
+                    <div class="msg-body-preview">${data.body || data.intro}</div>
+                `;
+                if (watchInterval) {
+                    toggleWatch();
+                    showToast('تم العثور على الكود بنجاح!');
+                }
+            } else {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 1.1rem; color: #f8fafc; margin-bottom: 6px;">صندوق الوارد فارغ حالياً</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            لم يصل كود بعد لهذا الحساب. اطلب كود التفعيل من تطبيق <strong>Gemgala</strong>، ثم اضغط على زر "فحص كود التحقق" مرة أخرى أو شغّل المراقبة التلقائية.
+                        </div>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            content.innerHTML = `<div style="color: var(--danger); text-align: center; padding: 15px;">فشل الاتصال بالخادم المحلي: ${e.message}</div>`;
+        }
+    }
+
+    function toggleWatch() {
+        const btn = document.getElementById('btnWatchOtp');
+        const text = document.getElementById('watchText');
+
+        if (watchInterval) {
+            clearInterval(watchInterval);
+            watchInterval = null;
+            btn.classList.remove('active');
+            text.innerText = 'مراقبة تلقائية';
+        } else {
+            btn.classList.add('active');
+            text.innerText = 'جاري المراقبة... (إيقاف)';
+            checkSelectedOtp();
+            watchInterval = setInterval(() => {
+                checkSelectedOtp(true);
+            }, 3000);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', checkServerStatus);
+</script>
+
+</body>
+</html>
